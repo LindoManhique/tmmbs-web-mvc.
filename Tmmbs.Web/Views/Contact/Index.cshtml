@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "Contact";
+}
+<h2>Contact</h2>
+@if (TempData["ok"] != null)
+{
+     <p>@TempData["ok"]</p>
+}
+
+<form method="post" action="/Contact">
+    <input name="Name" placeholder="Your name" required />
+    <input name="Email" type="email" placeholder="Your email" required />
+    <textarea name="Message" placeholder="Message" required></textarea>
+    <button type="submit">Send</button>
+</form>

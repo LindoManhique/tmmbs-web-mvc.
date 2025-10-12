@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TMMBS</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="brand">
+                <img src="~/img/logo.png" alt="TMMBS" onerror="this.style.display='none'">
+                <a href="/" style="font-size:18px;">TMMBS</a>
+            </div>
+
+            <a href="/">Home</a>
+            <a href="/Home/About">About</a>
+            <a href="/Contact">Contact</a>
+            <a href="/Services">Services</a>
+            <a href="/Media">Media</a>
+            <a href="/Booking">Book</a>
+
+            <a id="signin-link" href="/Auth/SignIn">Sign In</a>
+            <a id="signout-link" href="#" style="display:none;">Sign Out</a>
+
+            <!-- Shows when signed in -->
+            <span id="user-email" style="display:none;margin-left:12px;"></span>
+        </nav>
+    </header>
+
+    <main class="container">
+        @RenderBody()
+    </main>
+
+    <footer>
+        <div class="container">© @DateTime.Now.Year TMMBS — Prototype Web</div>
+    </footer>
+
+    <!-- Firebase config from server -->
+    <script src="/firebaseConfig.js"></script>
+    <!-- Firebase JS SDKs (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Initialize Firebase
+        firebase.initializeApp(window.firebaseConfig);
+
+        // Tell the server about the current user (sets/clears the secure cookie)
+        async function setAuthCookie(user) {
+            if (!user) {
+                // Clear cookie on the server
+                await fetch('/auth/logout', { method: 'POST' });
+                return;
+            }
+            const token = await user.getIdToken();
+            await fetch('/auth/set-token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ idToken: token })
+            });
+        }
+
+        // UI elements
+        const inLink = document.getElementById('signin-link');
+        const outLink = document.getElementById('signout-link');
+        const emailTag = document.getElementById('user-email');
+
+        // Keep UI + server cookie in sync with Firebase auth state
+        firebase.auth().onAuthStateChanged(async (user) => {
+            await setAuthCookie(user);
+
+            if (user) {
+                if (inLink) inLink.style.display = 'none';
+                if (outLink) outLink.style.display = 'inline-block';
+                if (emailTag) {
+                    emailTag.textContent = `Signed in as ${user.email || user.uid}`;
+                    emailTag.style.display = 'inline-block';
+                }
+            } else {
+                if (inLink) inLink.style.display = 'inline-block';
+                if (outLink) outLink.style.display = 'none';
+                if (emailTag) {
+                    emailTag.textContent = '';
+                    emailTag.style.display = 'none';
+                }
+            }
+        });
+
+        // Sign out
+        document.getElementById('signout-link')?.addEventListener('click', async (e) => {
+            e.preventDefault();
+            await firebase.auth().signOut(); // triggers onAuthStateChanged -> clears cookie
+            window.location.href = '/';
+        });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

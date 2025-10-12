@@ -1,0 +1,66 @@
+﻿@model Tmmbs.Web.Models.Booking
+@{
+    ViewData["Title"] = "Book a Consultation";
+    var services = ViewBag.Services as List<Tmmbs.Web.Models.ServiceItem>;
+    var selected = ViewBag.SelectedServiceId as string;
+}
+<h2>Book a Consultation</h2>
+@if (TempData["err"] != null)
+{
+     <p style="color:#b91c1c">@TempData["err"]</p>
+}
+@if (TempData["ok"] != null)
+{
+     <p style="color:#065f46">@TempData["ok"]</p>
+}
+
+<form method="post" action="/Booking">
+    <label>Service</label>
+    <select name="ServiceId" required style="max-width:540px;padding:10px;border-radius:8px;border:1px solid #ddd;">
+        <option value="">-- Select a service --</option>
+
+        @if (services == null || services.Count == 0)
+        {
+            <option disabled>No services available</option>
+        }
+        else
+        {
+            @foreach (var s in services)
+            {
+                var dur = s.DurationMins > 0 ? $" ({s.DurationMins} min)" : "";
+                var price = s.Price > 0 ? $" - R {s.Price}" : "";
+                var label = $"{s.Name}{dur}{price}";
+
+                if (string.Equals(selected, s.Id, StringComparison.Ordinal))
+                {
+                    <option value="@s.Id" selected="selected">@label</option>
+                }
+                else
+                {
+                    <option value="@s.Id">@label</option>
+                }
+            }
+        }
+    </select>
+
+    <label>Your full name</label>
+    <input name="Name" placeholder="e.g. Lindo Manhique" required />
+
+    <label>Email</label>
+    <input name="Email" type="email" placeholder="you@example.com" required />
+
+    <label>Phone (optional)</label>
+    <input name="Phone" placeholder="+27 ..." />
+
+    <label>Preferred date & time</label>
+    <input name="StartAt" type="datetime-local" value="@Model.StartAt.ToString("yyyy-MM-ddTHH:mm")" required />
+
+    <label>Notes (optional)</label>
+    <textarea name="Notes" placeholder="Anything we should know?"></textarea>
+
+    <button type="submit">Request Consultation</button>
+</form>
+
+<p style="margin-top:12px">
+    <a class="btn" href="/MyBookings">View my bookings</a>
+</p>

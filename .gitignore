@@ -1,0 +1,27 @@
+# VS/.NET
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# Outputs
+*/wwwroot/lib/
+node_modules/
+
+# Local settings
+launchSettings.json
+
+# Secrets (never commit keys)
+secrets.json
+*.pfx
+*.key.json
+*firebase-adminsdk*.json
+/secrets/
+/secret/
+/keys/
+/key/
+
+# OS junk
+.DS_Store
+Thumbs.db

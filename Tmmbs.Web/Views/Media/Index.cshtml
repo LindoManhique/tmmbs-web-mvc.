@@ -1,0 +1,25 @@
+﻿@model List<Tmmbs.Web.Models.MediaItem>
+@{
+    ViewData["Title"] = "Media";
+}
+<section class="section">
+    <div class="container">
+        <h2 style="margin:0 0 12px">Media</h2>
+        <p style="color:#5b6b7a">Recent images and videos.</p>
+
+        <div class="grid" style="margin-top:18px">
+            @foreach (var m in Model)
+            {
+                <article class="card">
+                    <img src="@(string.IsNullOrWhiteSpace(m.ThumbnailUrl) ? m.Url : m.ThumbnailUrl)" alt="@m.Title" />
+                    <div class="body">
+                        <h4>@(string.IsNullOrWhiteSpace(m.Title) ? "Untitled" : m.Title)</h4>
+                        <div class="actions">
+                            <a class="btn" href="@m.Url" target="_blank" rel="noopener">Open</a>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>

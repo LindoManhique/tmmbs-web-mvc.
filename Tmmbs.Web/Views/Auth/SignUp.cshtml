@@ -1,0 +1,38 @@
+﻿@{
+    ViewData["Title"] = "Sign Up";
+}
+<h2>Create Account</h2>
+
+<form id="signup-form" style="max-width:620px">
+    <input id="email" type="email" placeholder="Email" required />
+    <input id="password" type="password" placeholder="Password" required />
+    <button type="submit">Sign Up</button>
+</form>
+
+<p style="margin-top:10px">
+    Already have an account? <a id="signin-link" href="/Auth/SignIn">Sign in</a>
+</p>
+
+@section Scripts {
+    <script>
+        // Respect returnUrl (fallback to home)
+        const params = new URLSearchParams(window.location.search);
+        const returnUrl = params.get('returnUrl') || '/';
+
+        // Keep returnUrl when switching to Sign In
+        const signinLink = document.getElementById('signin-link');
+        signinLink.href = '/Auth/SignIn' + (returnUrl ? ('?returnUrl=' + encodeURIComponent(returnUrl)) : '');
+
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            try {
+                await firebase.auth().createUserWithEmailAndPassword(email, password);
+                window.location.href = returnUrl; // no Dashboard
+            } catch (err) {
+                alert(err.message);
+            }
+        });
+    </script>
+}

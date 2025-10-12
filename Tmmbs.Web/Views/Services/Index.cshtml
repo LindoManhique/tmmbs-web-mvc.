@@ -1,0 +1,40 @@
+﻿@model List<Tmmbs.Web.Models.ServiceItem>
+@{
+    ViewData["Title"] = "Services";
+}
+<section class="section">
+    <div class="container">
+        <h2 style="margin:0 0 12px">Our Services</h2>
+        <p style="color:#5b6b7a">Browse what we offer and book a consultation.</p>
+
+        <div class="grid" style="margin-top:18px">
+            @foreach (var s in Model)
+            {
+                <article class="card">
+                    <img src="@(string.IsNullOrWhiteSpace(s.ImageUrl) ? "/img/hero.jpeg" : s.ImageUrl)" alt="@s.Name" />
+                    <div class="body">
+                        <h4>@s.Name</h4>
+                        @if (!string.IsNullOrWhiteSpace(s.Description))
+                        {
+                            <p>@(s.Description.Length > 160 ? s.Description.Substring(0, 160) + "..." : s.Description)</p>
+                        }
+                        <div class="meta">
+                            @if (s.DurationMins > 0)
+                            {
+                                <span>@s.DurationMins min</span>
+                            }
+                            @if (s.Price > 0)
+                            {
+                                <span> · R @s.Price</span>
+                            }
+                        </div>
+                        <div class="actions">
+                            <a class="btn btn-primary" href="/Services/Details/@s.Id">View</a>
+                            <a class="btn" href="/Booking?serviceId=@s.Id">Book</a>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>

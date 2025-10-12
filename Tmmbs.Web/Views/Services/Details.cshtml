@@ -1,0 +1,41 @@
+﻿@model Tmmbs.Web.Models.ServiceItem
+@{
+    ViewData["Title"] = Model.Name;
+}
+<h2>@Model.Name</h2>
+
+@if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+{
+    <img src="@Model.ImageUrl" alt="@Model.Name" style="max-width:520px;border-radius:12px" />
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.Description))
+{
+    <p style="margin-top:10px">@Model.Description</p>
+}
+
+@if (Model.DurationMins > 0)
+{
+    <p><b>Duration:</b> @Model.DurationMins min</p>
+}
+
+@if (Model.Price > 0)
+{
+    <p><b>Price:</b> R @Model.Price</p>
+}
+
+<p>
+    <a class="btn" id="book-btn" href="/Booking?serviceId=@Model.Id">Book a consultation</a>
+</p>
+
+@section Scripts {
+    <script>
+        // Client nicety: if not signed in, send through SignIn with returnUrl.
+        // Server still enforces auth in the controller.
+        firebase.auth().onAuthStateChanged((user) => {
+            const btn = document.getElementById('book-btn');
+            const target = "/Booking?serviceId=@Model.Id";
+            btn.href = user ? target : `/Auth/SignIn?returnUrl=${encodeURIComponent(target)}`;
+        });
+    </script>
+}
