@@ -25,3 +25,30 @@ secrets.json
 # OS junk
 .DS_Store
 Thumbs.db
+
+
+## Build outputs
+bin/
+obj/
+
+## Publish output
+publish/
+Publish*/
+
+## VS/OS clutter
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Secrets (DO NOT COMMIT)
+tmmbs-firebase-key.json
+secrets.json
+
+## Logs
+*.log
+
+## Node/vendor (if any)
+node_modules/
+wwwroot/lib/
