@@ -1,10 +1,18 @@
-﻿<!DOCTYPE html>
+﻿@{
+    ViewData["Title"] ??= "TMMBS";
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - TMMBS</title>
+
+    <!-- Base site styles -->
     <link rel="stylesheet" href="~/css/site.css" />
+    <!-- Auth pages styles (Sign In / Sign Up) -->
+    <link rel="stylesheet" href="~/css/auth.css" />
 </head>
 <body>
     <header>
@@ -18,13 +26,15 @@
             <a href="/Home/About">About</a>
             <a href="/Contact">Contact</a>
             <a href="/Services">Services</a>
-            <a href="/Media">Media</a>
+            <!-- Media link removed -->
             <a href="/Booking">Book</a>
+
+            <!-- Always visible Admin link -->
+            <a href="/Admin/Dashboard">Admin</a>
 
             <a id="signin-link" href="/Auth/SignIn">Sign In</a>
             <a id="signout-link" href="#" style="display:none;">Sign Out</a>
 
-            <!-- Shows when signed in -->
             <span id="user-email" style="display:none;margin-left:12px;"></span>
         </nav>
     </header>
@@ -33,12 +43,88 @@
         @RenderBody()
     </main>
 
-    <footer>
-        <div class="container">© @DateTime.Now.Year TMMBS — Prototype Web</div>
+    <!-- === GLOBAL FOOTER === -->
+    <footer class="site-footer">
+        <div class="container footer-grid" style="display:flex;flex-wrap:nowrap;align-items:flex-start;justify-content:space-between;gap:28px;padding:28px 0 18px;">
+            <!-- Brand / Contact -->
+            <section class="footer-col brand-col" style="flex:1 1 0;min-width:0;flex-basis:42%;">
+                <div class="brand-row" style="display:flex;align-items:center;gap:14px;">
+                    <img src="~/img/logo.png" alt="TMMBS" class="footer-logo" style="height:58px;width:auto;" onerror="this.style.display='none'">
+                    <div class="brand-text">
+                        <h3 class="footer-title">TMMBS Inc.</h3>
+                        <p class="footer-copy">
+                            We deliver assurance and advisory services with speed, clarity and world-class professionalism.
+                        </p>
+                    </div>
+                </div>
+
+                <ul class="footer-list">
+                    <li><strong>Email:</strong> <a href="mailto:info@tmmbs.co.za">info@tmmbs.co.za</a></li>
+                    <li><strong>Phone:</strong> <a href="tel:+27100352779">+27&nbsp;10&nbsp;035&nbsp;2779</a></li>
+                    <li class="footer-socials">
+                        <a class="social social-ig" href="https://www.instagram.com/tmmbs_za/?hl=en" target="_blank" rel="noopener" aria-label="TMMBS on Instagram">
+                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" class="ig-icon">
+                                <path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.9.3 2.4.5.6.2 1 .5 1.5 1s.8.9 1 1.5c.2.5.4 1.2.5 2.4.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.9-.5 2.4-.2.6-.5 1-1 1.5s-.9.8-1.5 1c-.5.2-1.2.4-2.4.5-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.9-.3-2.4-.5a4.1 4.1 0 0 1-1.5-1 4.1 4.1 0 0 1-1-1.5c-.2-.5-.4-1.2-.5-2.4C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.9.5-2.4.2-.6.5-1 1-1.5s.9-.8 1.5-1c.5-.2 1.2-.4 2.4-.5C8.4 2.2 8.8 2.2 12 2.2z" />
+                                <path d="M12 5.8a6.2 6.2 0 1 0 0 12.4A6.2 6.2 0 0 0 12 5.8zm0 10.2A4 4 0 1 1 12 8a4 4 0 0 1 0 8.1zm6.3-10.6a1.4 1.4 0 1 0-2.9 0 1.4 1.4 0 0 0 2.9 0z" />
+                            </svg>
+                            <span>Instagram</span>
+                        </a>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Quick Links + Hours -->
+            <section class="footer-col link-col" style="flex:1 1 0;min-width:0;flex-basis:28%;">
+                <h3 class="footer-title">Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/Home/About">About</a></li>
+                    <li><a href="/Services">Services</a></li>
+                    <li><a href="/Booking">Book</a></li>
+                    <li><a href="/Contact">Contact</a></li>
+                </ul>
+
+                <h3 class="footer-title mtop">Work Hours</h3>
+                <ul class="footer-hours">
+                    <li><strong>Mon–Fri:</strong> 09:00 – 17:00</li>
+                    <li><strong>Sat–Sun:</strong> Closed</li>
+                </ul>
+            </section>
+
+            <!-- Address / Map -->
+            <section class="footer-col map-col" style="flex:1 1 0;min-width:0;flex-basis:30%;">
+                <h3 class="footer-title">Address</h3>
+                <p class="footer-address">
+                    Located in: Webber Wentzel<br />
+                    140 West St, Sandhurst, Sandton, 2196
+                </p>
+                <div class="footer-map">
+                    <iframe title="TMMBS office map"
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            src="https://www.google.com/maps?q=140+West+St,+Sandhurst,+Sandton,+2196&output=embed">
+                    </iframe>
+                </div>
+            </section>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container footer-bottom-row">
+                <span>© @DateTime.Now.Year TMMBS — All rights reserved.</span>
+                <a class="social social-ig inline" href="https://www.instagram.com/tmmbs_za/?hl=en" target="_blank" rel="noopener" aria-label="Instagram">
+                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="ig-icon">
+                        <path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.9.3 2.4.5.6.2 1 .5 1.5 1s.8.9 1 1.5c.2.5.4 1.2.5 2.4.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.9-.5 2.4-.2.6-.5 1-1 1.5s-.9.8-1.5 1c-.5.2-1.2.4-2.4.5-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.9-.3-2.4-.5a4.1 4.1 0 0 1-1.5-1 4.1 4.1 0 0 1-1-1.5c-.2-.5-.4-1.2-.5-2.4C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.9.5-2.4.2-.6.5-1 1-1.5s.9-.8 1.5-1c.5-.2 1.2-.4 2.4-.5C8.4 2.2 8.8 2.2 12 2.2z" />
+                        <path d="M12 5.8a6.2 6.2 0 1 0 0 12.4A6.2 6.2 0 0 0 12 5.8zm0 10.2A4 4 0 1 1 12 8a4 4 0 0 1 0 8.1zm6.3-10.6a1.4 1.4 0 1 0-2.9 0 1.4 1.4 0 0 0 2.9 0z" />
+                    </svg>
+                    <span>Instagram</span>
+                </a>
+            </div>
+        </div>
     </footer>
 
-    <!-- Firebase config from server -->
+    <!-- Firebase config from server must define window.firebaseConfig -->
     <script src="/firebaseConfig.js"></script>
+
     <!-- Firebase JS SDKs (compat) -->
     <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js"></script>
@@ -48,30 +134,30 @@
         // Initialize Firebase
         firebase.initializeApp(window.firebaseConfig);
 
-        // Tell the server about the current user (sets/clears the secure cookie)
         async function setAuthCookie(user) {
             if (!user) {
-                // Clear cookie on the server
-                await fetch('/auth/logout', { method: 'POST' });
+                try { await fetch('/Auth/Logout', { method: 'GET' }); } catch { }
                 return;
             }
-            const token = await user.getIdToken();
-            await fetch('/auth/set-token', {
+            const token = await user.getIdToken(true);
+            const body = new URLSearchParams({ idToken: token });
+            const resp = await fetch('/Auth/SessionLogin', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ idToken: token })
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body
             });
+            if (resp.ok && !sessionStorage.getItem('reloadedAfterLogin')) {
+                sessionStorage.setItem('reloadedAfterLogin', '1');
+                location.reload();
+            }
         }
 
-        // UI elements
         const inLink = document.getElementById('signin-link');
         const outLink = document.getElementById('signout-link');
         const emailTag = document.getElementById('user-email');
 
-        // Keep UI + server cookie in sync with Firebase auth state
         firebase.auth().onAuthStateChanged(async (user) => {
             await setAuthCookie(user);
-
             if (user) {
                 if (inLink) inLink.style.display = 'none';
                 if (outLink) outLink.style.display = 'inline-block';
@@ -80,6 +166,7 @@
                     emailTag.style.display = 'inline-block';
                 }
             } else {
+                sessionStorage.removeItem('reloadedAfterLogin');
                 if (inLink) inLink.style.display = 'inline-block';
                 if (outLink) outLink.style.display = 'none';
                 if (emailTag) {
@@ -89,13 +176,15 @@
             }
         });
 
-        // Sign out
         document.getElementById('signout-link')?.addEventListener('click', async (e) => {
             e.preventDefault();
-            await firebase.auth().signOut(); // triggers onAuthStateChanged -> clears cookie
+            try { await firebase.auth().signOut(); } catch { }
             window.location.href = '/';
         });
     </script>
+
+    <!-- Auth helpers (must be after Firebase so views can use it) -->
+    <script src="~/js/auth.js"></script>
 
     @RenderSection("Scripts", required: false)
 </body>

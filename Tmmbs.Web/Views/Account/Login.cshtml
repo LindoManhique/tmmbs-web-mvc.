@@ -1,0 +1,59 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+/* Simple styles are fine */
+<h2>Login</h2>
+<form id="loginForm" onsubmit="return false;">
+    <div>
+        <label>Email</label>
+        <input type="email" id="email" required />
+    </div>
+    <div>
+        <label>Password</label>
+        <input type="password" id="password" required />
+    </div>
+    <button id="loginBtn">Sign In</button>
+</form>
+<p><a href="/Auth/Logout">Clear session</a></p>
+
+<!-- Firebase SDKs (CDN) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
+
+<script>
+    // TODO: replace with your real web app config from Firebase Console → Project settings → Web app
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+        const email = (document.getElementById('email').value || '').trim();
+        const password = document.getElementById('password').value;
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+            const token = await auth.currentUser.getIdToken(/* forceRefresh */ true);
+
+            // Send token to server to set HttpOnly cookie
+            const resp = await fetch('/Auth/SessionLogin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ idToken: token })
+            });
+
+            if (!resp.ok) {
+                const t = await resp.text();
+                alert('Failed to set session: ' + t);
+                return;
+            }
+            // Go to admin dashboard (server will authorize)
+            window.location.href = '/Admin/Dashboard';
+        } catch (e) {
+            alert(e.message);
+        }
+    });
+</script>

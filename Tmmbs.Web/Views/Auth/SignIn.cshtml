@@ -1,37 +1,65 @@
 ﻿@{
     ViewData["Title"] = "Sign In";
+    var returnUrl = (string?)ViewData["ReturnUrl"] ?? "/";
 }
-<h2>Sign In</h2>
 
-<form id="signin-form" style="max-width:620px">
-    <input id="email" type="email" placeholder="Email" required />
-    <input id="password" type="password" placeholder="Password" required />
-    <button type="submit">Sign In</button>
-</form>
+<div class="auth-wrap">
+    <div class="auth-card">
+        <h2 class="auth-title">Sign In</h2>
 
-<p style="margin-top:10px">
-    New here? <a id="signup-link" href="/Auth/SignUp">Create an account</a>
-</p>
+        <div id="auth-error" class="alert alert-error" style="display:none;"></div>
+
+        <form id="signin-form" class="auth-form" novalidate>
+            <div class="form-row">
+                <label for="email">Email</label>
+                <input id="email" type="email" class="input" placeholder="you@example.com" required />
+            </div>
+
+            <div class="form-row">
+                <label for="password">Password</label>
+                <div class="password-row">
+                    <input id="password" type="password" class="input" placeholder="Your password" required />
+                    <button type="button" id="toggle-signin-password" class="btn-ghost" aria-label="Show or hide password">Show</button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary btn-block">Sign In</button>
+        </form>
+
+        <p class="auth-switch">
+            New here?
+            <a id="signup-link" href="/Auth/SignUp">Create an account</a>
+        </p>
+    </div>
+</div>
 
 @section Scripts {
     <script>
-        // Read returnUrl (fallback to home)
-        const params = new URLSearchParams(window.location.search);
-        const returnUrl = params.get('returnUrl') || '/';
+        // keep returnUrl between pages
+        const returnUrl = "@returnUrl";
+        const signUpLink = document.getElementById('signup-link');
+        signUpLink.href = '/Auth/SignUp' + (returnUrl ? ('?returnUrl=' + encodeURIComponent(returnUrl)) : '');
 
-        // Keep returnUrl when switching to Sign Up
-        const signupLink = document.getElementById('signup-link');
-        signupLink.href = '/Auth/SignUp' + (returnUrl ? ('?returnUrl=' + encodeURIComponent(returnUrl)) : '');
+        // show/hide password
+        window.Auth?.wireShowHide('toggle-signin-password', 'password');
 
+        // sign-in handler
         document.getElementById('signin-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
+
             try {
-                await firebase.auth().signInWithEmailAndPassword(email, password);
-                window.location.href = returnUrl;  // no Dashboard
+                const cred = await firebase.auth().signInWithEmailAndPassword(email, password);
+                const token = await cred.user.getIdToken(true);
+                await fetch('/Auth/SessionLogin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ idToken: token })
+                });
+                window.location.href = returnUrl || '/';
             } catch (err) {
-                alert(err.message);
+                window.Auth?.showError('auth-error', err?.message || 'Sign in failed.');
             }
         });
     </script>

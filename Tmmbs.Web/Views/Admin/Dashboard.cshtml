@@ -1,0 +1,113 @@
+﻿@model Tmmbs.Web.Models.AdminDashboardVM
+@using System.Globalization
+@using Google.Cloud.Firestore
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+
+    string fmt(DateTime? dt) =>
+        dt.HasValue ? dt.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture) : "—";
+
+    string FmtCreated(object? v)
+    {
+        if (v is Timestamp ts) return ts.ToDateTime().ToLocalTime().ToString("yyyy-MM-dd HH:mm");
+        if (v is DateTime dt) return dt.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
+        if (v is string s && DateTime.TryParse(s, out var p)) return p.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
+        return "—";
+    }
+}
+
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>Admin Dashboard</h1>
+        <div class="admin-actions">
+            <a class="btn-small" href="/Auth/Logout">Logout</a>
+        </div>
+    </div>
+
+    <!-- ===================== BOOKINGS ===================== -->
+    <section class="card">
+        <div class="card-title">BOOKINGS</div>
+
+        @if (Model.Bookings?.Any() == true)
+        {
+            <div class="booking-list">
+                @foreach (var b in Model.Bookings)
+                {
+                    <div class="booking-card">
+
+                        <div class="vblock">
+                            <div><strong>Name:</strong> @b.Name</div>
+                            <div><strong>Email:</strong> @b.Email</div>
+                            <div><strong>Phone:</strong> @b.Phone</div>
+                            <div><strong>Service:</strong> @b.ServiceName</div>
+                            <div><strong>Preferred Date &amp; Time:</strong> @fmt(b.StartAt)</div>
+                            <div><strong>Created:</strong> @fmt(b.CreatedAt)</div>
+
+                            <div><strong>Status &amp; Actions:</strong></div>
+                            <form asp-action="UpdateBookingStatus" method="post" class="inline-form">
+                                <input type="hidden" name="id" value="@b.Id" />
+                                <select name="status" class="select">
+                                    <option value="pending" selected="@(b.Status?.ToLower()=="pending")">pending</option>
+                                    <option value="confirmed" selected="@(b.Status?.ToLower()=="confirmed")">confirmed</option>
+                                    <option value="completed" selected="@(b.Status?.ToLower()=="completed")">completed</option>
+                                    <option value="cancelled" selected="@(b.Status?.ToLower()=="cancelled")">cancelled</option>
+                                </select>
+                                <button class="btn-small" type="submit">Save</button>
+                                @Html.AntiForgeryToken()
+                            </form>
+
+                            <div><strong>Notes:</strong> @b.Notes</div>
+                        </div>
+
+                        <form asp-action="DeleteBooking" method="post" class="inline-form mt-2">
+                            <input type="hidden" name="id" value="@b.Id" />
+                            <button class="btn-small btn-danger" type="submit">Delete</button>
+                            @Html.AntiForgeryToken()
+                        </form>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty">No bookings yet.</div>
+        }
+    </section>
+
+    <!-- ================= CONTACT MESSAGES ================= -->
+    <section class="card">
+        <div class="card-title">CONTACT MESSAGES</div>
+
+        @if (Model.Contacts?.Any() == true)
+        {
+            <div class="vertical-list">
+                @foreach (var c in Model.Contacts)
+                {
+                    var d = c.Data;
+                    d.TryGetValue("name", out var name);
+                    d.TryGetValue("email", out var email);
+                    d.TryGetValue("message", out var message);
+                    d.TryGetValue("createdAt", out var created);
+
+                    <div class="vcard">
+                        <div><strong>Name:</strong> @(name?.ToString() ?? "—")</div>
+                        <div><strong>Email:</strong> @(email?.ToString() ?? "—")</div>
+                        <div><strong>Message:</strong> @(message?.ToString() ?? "—")</div>
+                        <div><strong>Created:</strong> @FmtCreated(created)</div>
+
+                        <form asp-action="DeleteContact" method="post" class="inline-form">
+                            <input type="hidden" name="id" value="@c.Id" />
+                            <button class="btn-small btn-danger" type="submit">Delete</button>
+                            @Html.AntiForgeryToken()
+                        </form>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty">No contact messages found.</div>
+        }
+    </section>
+</div>

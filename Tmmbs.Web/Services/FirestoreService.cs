@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Firestore;
 using Google.Cloud.Firestore.V1;
+using Microsoft.Extensions.Configuration;
 using Tmmbs.Web.Models;
 
 namespace Tmmbs.Web.Services
@@ -17,30 +19,45 @@ namespace Tmmbs.Web.Services
         {
             var projectId = cfg["FirebaseWeb:projectId"];
             if (string.IsNullOrWhiteSpace(projectId))
-                throw new InvalidOperationException("FirebaseWeb:projectId is missing from appsettings.json");
+                throw new InvalidOperationException("FirebaseWeb:projectId is missing from configuration.");
 
-            // Resolve credentials (env var first, then config/User Secrets)
-            var credPath = Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS")
-                          ?? cfg["Google:CredentialsPath"];
-
-            GoogleCredential cred;
-            if (!string.IsNullOrWhiteSpace(credPath) && File.Exists(credPath))
+            // ---- Resolve GoogleCredential (JSON first, then file path, then ADC) ----
+            GoogleCredential ResolveGoogleCredential()
             {
-                cred = GoogleCredential.FromFile(credPath);
-            }
-            else
-            {
-                // Final fallback (will throw if nothing available in the process)
-                cred = GoogleCredential.GetApplicationDefault();
+                // JSON blob stored in an App Setting (Azure-friendly)
+                var credJson =
+                    Environment.GetEnvironmentVariable("GOOGLE_CREDENTIALS_JSON")
+                    ?? cfg["Google:CredentialsJson"];
+
+                if (!string.IsNullOrWhiteSpace(credJson))
+                    return GoogleCredential.FromJson(credJson);
+
+                // File path (env or config)
+                var credPath =
+                    Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS")
+                    ?? cfg["Google:CredentialPath"]
+                    ?? cfg["Google:CredentialsPath"];
+
+                if (string.IsNullOrWhiteSpace(credPath))
+                {
+                    var localKey = Path.Combine(AppContext.BaseDirectory, "tmmbs-firebase-key.json");
+                    if (File.Exists(localKey))
+                        credPath = localKey;
+                }
+
+                if (!string.IsNullOrWhiteSpace(credPath) && File.Exists(credPath))
+                    return GoogleCredential.FromFile(credPath);
+
+                // Application Default Credentials (last resort)
+                return GoogleCredential.GetApplicationDefault();
             }
 
-            // Ensure Firestore scopes
-            cred = cred.CreateScoped(FirestoreClient.DefaultScopes);
+            var cred = ResolveGoogleCredential().CreateScoped(FirestoreClient.DefaultScopes);
 
-            // Build Firestore with explicit credential
+            // Build Firestore with explicit credential (stable on Azure)
             _db = new FirestoreDbBuilder
             {
-                ProjectId = projectId,
+                ProjectId = projectId!,
                 Credential = cred
             }.Build();
         }
@@ -209,7 +226,7 @@ namespace Tmmbs.Web.Services
         }
     }
 
-    // Small helpers to safely read
+    // ---- Helpers to safely read fields ----
     internal static class SnapExt
     {
         public static bool TryGetValue<T>(this DocumentSnapshot snap, string field, out T value)
@@ -221,8 +238,12 @@ namespace Tmmbs.Web.Services
                     value = snap.GetValue<T>(field);
                     return true;
                 }
-                catch { /* ignore */ }
+                catch
+                {
+                    // ignore conversion errors
+                }
             }
+
             value = default!;
             return false;
         }

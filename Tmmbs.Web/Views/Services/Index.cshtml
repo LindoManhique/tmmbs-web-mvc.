@@ -2,12 +2,58 @@
 @{
     ViewData["Title"] = "Services";
 }
+
+<!-- Page-scoped hard caps so service images are small thumbnails -->
+<style>
+/* grid of services */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* card look */
+.services-grid .card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid #e8edf2;
+  border-radius: 14px;
+  background: #fff;
+  padding: 14px;
+  box-shadow: 0 8px 30px rgba(12,24,36,.08);
+}
+
+/* THUMBNAILS — force actual size regardless of original */
+.services-grid .card img {
+  width: 140px !important;
+  height: 100px !important;
+  object-fit: cover !important;
+  border-radius: 10px;
+  flex-shrink: 0;
+  display: block;
+}
+
+/* generic safety in case other images appear inside the page */
+main.container img {
+  max-width: 100% !important;
+  width: 100% !important;
+  height: auto !important;
+  max-height: 420px !important;
+  object-fit: cover !important;
+  border-radius: 12px;
+}
+
+
+</style>
+
 <section class="section">
     <div class="container">
         <h2 style="margin:0 0 12px">Our Services</h2>
         <p style="color:#5b6b7a">Browse what we offer and book a consultation.</p>
 
-        <div class="grid" style="margin-top:18px">
+        <!-- changed class to services-grid so our scoped CSS applies -->
+        <div class="services-grid" style="margin-top:18px">
             @foreach (var s in Model)
             {
                 <article class="card">
@@ -28,7 +74,7 @@
                                 <span> · R @s.Price</span>
                             }
                         </div>
-                        <div class="actions">
+                        <div class="actions" style="margin-top: 8px;">
                             <a class="btn btn-primary" href="/Services/Details/@s.Id">View</a>
                             <a class="btn" href="/Booking?serviceId=@s.Id">Book</a>
                         </div>

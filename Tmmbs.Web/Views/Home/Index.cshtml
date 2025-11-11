@@ -1,53 +1,162 @@
 ﻿@{
     ViewData["Title"] = "Home";
 }
+
+<!-- PAGE-SCOPED STYLES -->
+<style>
+/* ====== HERO ====== */
+.hero-landing {
+  position: relative;
+  min-height: 360px; /* compact on load */
+  display: grid;
+  align-items: center;
+  color: #fff;
+  padding: 38px 0;
+  /* gradient overlay + background image (replace the url if you want) */
+  background:
+    linear-gradient(180deg, rgba(6,20,34,.58), rgba(6,20,34,.68)),
+    url('/img/hero.jpeg') center/cover no-repeat;
+  border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(12,24,36,.12);
+}
+.hero-landing h1 {
+  margin: 0 0 8px;
+  font-size: clamp(1.8rem, 2.8vw, 2.25rem);
+  font-weight: 900;
+}
+.hero-landing p {
+  margin: 0 0 14px;
+  opacity: .95;
+  max-width: 850px;
+}
+.hero-cta { display: flex; gap: 10px; flex-wrap: wrap; }
+.hero-cta .btn {
+  display: inline-block; padding: 11px 16px; border-radius: 12px;
+  text-decoration: none; font-weight: 700; border: 1px solid transparent;
+}
+.hero-cta .btn-primary { background:#ffd166; color:#2b2b2b; border-color:#f3c34a; }
+.hero-cta .btn-primary:hover { background:#ffc84f; }
+.hero-cta .btn-ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.35); }
+.hero-cta .btn-ghost:hover { background: rgba(255,255,255,.12); }
+
+/* ====== WHAT WE DO (card row) ====== */
+.home-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+  gap: 16px; margin-top: 12px;
+}
+.home-cards .card {
+  display: flex; gap: 12px; align-items: flex-start;
+  border: 1px solid #e8edf2; border-radius: 14px; background: #fff;
+  padding: 14px; box-shadow: 0 8px 30px rgba(12,24,36,.08);
+}
+.home-cards .card img {
+  width: 140px !important; height: 100px !important; object-fit: cover !important;
+  border-radius: 10px; flex-shrink: 0; display: block;
+}
+
+/* ====== TRUST STRIP ====== */
+.trust-strip {
+  display: grid; grid-auto-flow: column; gap: 10px; align-items: center;
+  justify-content: start; overflow-x: auto; padding: 10px 0;
+}
+.badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border: 1px solid #e8edf2; border-radius: 999px;
+  background: #fff; box-shadow: 0 4px 16px rgba(12,24,36,.06);
+  white-space: nowrap; color: #0b3759; font-weight: 700;
+}
+
+/* ====== CTA BAND ====== */
+.cta-band {
+  margin: 22px 0 4px; padding: 18px 16px; text-align: center;
+  border-radius: 14px; background: #fafcfe; border: 1px solid #e8edf2;
+  box-shadow: 0 8px 30px rgba(12,24,36,.06);
+}
+.cta-band h3 { margin: 0 0 8px; font-size: 1.4rem; color:#0b3759; }
+.cta-band .btn-primary { padding: 12px 18px; border-radius: 12px;
+  background:#ffd166; color:#2b2b2b; font-weight:700; border:1px solid #f3c34a; text-decoration:none; }
+.cta-band .btn-primary:hover { background:#ffc84f; }
+
+/* generic safety for any other images inside main */
+main.container img { max-width:100% !important; width:100% !important; height:auto !important; max-height:420px !important; object-fit:cover !important; border-radius:12px; }
+
+
+</style>
+
+<!-- ====== HERO ====== -->
 <section class="hero">
-    <div class="wrap">
-        <h1>TMMBS — Consulting, Audits & Advisory</h1>
-        <p>Independent assurance and practical advisory—delivered with speed, clarity and world-class professionalism. Book a consultation or explore our services.</p>
-        <div class="actions">
-            <a class="btn btn-primary" href="/Services">Explore Services</a>
-            <a class="btn btn-ghost" href="/Contact">Contact Us</a>
+  <div class="container">
+    <div class="hero-landing">
+      <div class="container" style="width:min(960px,92%);">
+        <h1>TMMBS — Consulting, Audits &amp; Advisory</h1>
+        <p>
+          Independent assurance and practical advisory—delivered with speed, clarity and world-class professionalism.
+          Book a consultation or explore our services.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="/Services">Explore Services</a>
+          <a class="btn btn-ghost" href="/Contact">Contact Us</a>
         </div>
+      </div>
     </div>
+  </div>
 </section>
 
+<!-- ====== WHAT WE DO ====== -->
 <section class="section">
-    <div class="container">
-        <h3>What we do</h3>
-        <div class="grid">
-            <article class="card">
-                <img src="/img/hero.jpeg" alt="Assurance & Audit">
-                <div class="body">
-                    <h4>Assurance & Audit</h4>
-                    <p>External audit readiness, internal audit, control testing, and financial reporting improvements.</p>
-                    <div class="actions">
-                        <a class="btn" href="/Services">Learn more</a>
-                    </div>
-                </div>
-            </article>
-
-            <article class="card">
-                <img src="/img/hero.jpeg" alt="Risk & Compliance">
-                <div class="body">
-                    <h4>Risk & Compliance</h4>
-                    <p>Actionable risk frameworks, governance, and compliance programmes aligned to your industry.</p>
-                    <div class="actions">
-                        <a class="btn" href="/Services">Learn more</a>
-                    </div>
-                </div>
-            </article>
-
-            <article class="card">
-                <img src="/img/hero.jpeg" alt="Advisory">
-                <div class="body">
-                    <h4>Advisory & Analytics</h4>
-                    <p>Process optimisation, data-led insights and pragmatic guidance to move your business forward.</p>
-                    <div class="actions">
-                        <a class="btn" href="/Services">Learn more</a>
-                    </div>
-                </div>
-            </article>
+  <div class="container">
+    <h3>What we do</h3>
+    <div class="home-cards">
+      <article class="card">
+        <img src="/img/hero.jpeg" alt="Assurance & Audit">
+        <div class="body">
+          <h4>Assurance &amp; Audit</h4>
+          <p>External audit readiness, internal audit, control testing, and financial reporting improvements.</p>
+          <div class="actions"><a class="btn" href="/Services">Learn more</a></div>
         </div>
+      </article>
+
+      <article class="card">
+        <img src="/img/hero.jpeg" alt="Risk & Compliance">
+        <div class="body">
+          <h4>Risk &amp; Compliance</h4>
+          <p>Actionable risk frameworks, governance, and compliance programmes aligned to your industry.</p>
+          <div class="actions"><a class="btn" href="/Services">Learn more</a></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <img src="/img/hero.jpeg" alt="Advisory & Analytics">
+        <div class="body">
+          <h4>Advisory &amp; Analytics</h4>
+          <p>Process optimisation, data-led insights and pragmatic guidance to move your business forward.</p>
+          <div class="actions"><a class="btn" href="/Services">Learn more</a></div>
+        </div>
+      </article>
     </div>
+  </div>
+</section>
+
+<!-- ====== TRUST STRIP (optional badges) ====== -->
+<section class="section" style="padding-top: 6px;">
+  <div class="container">
+    <div class="trust-strip" aria-label="Trusted by">
+      <span class="badge">✔ ISO-aligned practices</span>
+      <span class="badge">✔ Independent assurance</span>
+      <span class="badge">✔ Data-driven insights</span>
+      <span class="badge">✔ Fast turnaround</span>
+    </div>
+  </div>
+</section>
+
+<!-- ====== CTA BAND ====== -->
+<section class="section">
+  <div class="container">
+    <div class="cta-band">
+      <h3>Ready to get started?</h3>
+      <p style="margin:0 0 10px; color:#5b6b7a">Book a consultation or send us a quick message and we’ll get back to you.</p>
+      <a class="btn-primary" href="/Booking">Book a Consultation</a>
+    </div>
+  </div>
 </section>

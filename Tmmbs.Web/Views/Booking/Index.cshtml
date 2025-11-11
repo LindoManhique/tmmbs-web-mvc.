@@ -5,13 +5,15 @@
     var selected = ViewBag.SelectedServiceId as string;
 }
 <h2>Book a Consultation</h2>
+
 @if (TempData["err"] != null)
 {
-     <p style="color:#b91c1c">@TempData["err"]</p>
+    <p style="color:#b91c1c">@TempData["err"]</p>
 }
+
 @if (TempData["ok"] != null)
 {
-     <p style="color:#065f46">@TempData["ok"]</p>
+    <p style="color:#065f46">@TempData["ok"]</p>
 }
 
 <form method="post" action="/Booking">
@@ -60,7 +62,3 @@
 
     <button type="submit">Request Consultation</button>
 </form>
-
-<p style="margin-top:12px">
-    <a class="btn" href="/MyBookings">View my bookings</a>
-</p>
